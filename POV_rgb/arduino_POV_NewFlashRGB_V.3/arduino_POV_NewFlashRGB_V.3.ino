@@ -8,6 +8,10 @@ byte refreshrate = 1;//delay time for pixels to refresh in milliseconds- experim
 //get length of string povtext
 int dimtext = povtext.length();
 
+//Si se usa catodo comun poner estado LOW
+//Si se usa anodo comun poner estado HIGH
+boolean estado = LOW;
+
 //array para el patron de inicio
 const boolean load[] = {
   0, 1, 1, 1, 1, 1, 1, 1,
@@ -887,52 +891,58 @@ void sendToWandMW(const boolean letterArray[]) { //M and W are extra wide- they 
     //data3 = 0;
   }
 }
+//NOTA SOBRE estado, cuando es catodo comun...
+//!LOW es HIGH -> !estado
+//!HIGH es LOW -> estado
 
 //funcion para pasarle los colores con las letras R,G,B,y W
 void colorSetup (char n) {
   if ( n == 'B' ) {
-    digitalWrite(9, !HIGH);
-    digitalWrite(10, !LOW);
-    digitalWrite(11, !LOW);
+    digitalWrite(9, estado);
+    digitalWrite(10, !estado);
+    digitalWrite(11, !estado);
   }
   else if (n == 'G' ) {
-    digitalWrite(9, !LOW);
-    digitalWrite(10, !HIGH);
-    digitalWrite(11, !LOW);
+    digitalWrite(9, !estado);
+    digitalWrite(10, estado);
+    digitalWrite(11, !estado);
   }
   else if ( n == 'R') {
-    digitalWrite(9, !LOW);
-    digitalWrite(10, !LOW);
-    digitalWrite(11, !HIGH);
+    digitalWrite(9, !estado);
+    digitalWrite(10, !estado);
+    digitalWrite(11, estado);
   }
   else if ( n == 'W') {
-    digitalWrite(9, !HIGH);
-    digitalWrite(10, !HIGH);
-    digitalWrite(11, !HIGH);
+    digitalWrite(9, estado);
+    digitalWrite(10, estado);
+    digitalWrite(11, estado);
   }
 }
+
+//!LOW es HIGH -> !estado
+//!HIGH es LOW -> estado
 
 //funcion para pasarle los colores con 1,2,3,4 para usar con el boton ponele
 void colorSetupBoton (int n) {
   if ( n == 1 ) {
-    digitalWrite(9, !HIGH);
-    digitalWrite(10, !LOW);
-    digitalWrite(11, !LOW);
+    digitalWrite(9, estado);
+    digitalWrite(10, !estado);
+    digitalWrite(11, !estado);
   }
   else if (n == 2 ) {
-    digitalWrite(9, !LOW);
-    digitalWrite(10, !HIGH);
-    digitalWrite(11, !LOW);
+    digitalWrite(9, !estado);
+    digitalWrite(10, estado);
+    digitalWrite(11, !estado);
   }
   else if ( n == 3) {
-    digitalWrite(9, !LOW);
-    digitalWrite(10, !LOW);
-    digitalWrite(11, !HIGH);
+    digitalWrite(9, !estado);
+    digitalWrite(10, !estado); 
+    digitalWrite(11, estado); 
   }
   else if ( n == 4) {
-    digitalWrite(9, !HIGH);
-    digitalWrite(10, !HIGH);
-    digitalWrite(11, !HIGH);
+    digitalWrite(9, estado);
+    digitalWrite(10, estado);
+    digitalWrite(11, estado);
   }
 }
 
@@ -945,11 +955,12 @@ void botonActivado() {
     estadoAnterior = estadoBoton;
   }
 
-  colorSetupBoton (pasoBoton);
-
   if (pasoBoton > 4) {
     pasoBoton = 0;
   }
+  
+  colorSetupBoton (pasoBoton);
+
 }
 
 
@@ -1032,15 +1043,21 @@ void loop() {
   //PORTC = 0;
 
   //aca apago todo los leds para dejar espacio lo mismo que PORTD = 0 (esta en HIGH por que es catodo comun)
-  digitalWrite(0, HIGH);
-  digitalWrite(1, HIGH);
-  digitalWrite(2, HIGH);
-  digitalWrite(3, HIGH);
-  digitalWrite(4, HIGH);
-  digitalWrite(5, HIGH);
-  digitalWrite(6, HIGH);
-  digitalWrite(7, HIGH);
-  
+  for (int i = 0; i < 8; i++) {
+    digitalWrite(i, !estado);
+  }
+
+  /*
+    digitalWrite(0, HIGH);
+    digitalWrite(1, HIGH);
+    digitalWrite(2, HIGH);
+    digitalWrite(3, HIGH);
+    digitalWrite(4, HIGH);
+    digitalWrite(5, HIGH);
+    digitalWrite(6, HIGH);
+    digitalWrite(7, HIGH);
+  */
+
   delay(refreshrate * 3);
 
   for (n = 0; n < dimtext; n++) { //go through each character of povtext and call function sendToWand to display letter
@@ -1156,6 +1173,34 @@ void loop() {
       //PORTB = 0;
       // PORTD = 0;
       //PORTC = 0;
+
+      for (int i = 0; i < 8; i++) {
+        digitalWrite(i, !estado);
+      }
+
+      /*
+        digitalWrite(0, HIGH);
+        digitalWrite(1, HIGH);
+        digitalWrite(2, HIGH);
+        digitalWrite(3, HIGH);
+        digitalWrite(4, HIGH);
+        digitalWrite(5, HIGH);
+        digitalWrite(6, HIGH);
+        digitalWrite(7, HIGH);
+      */
+      delay(refreshrate * 3); //off for 3 pixels
+    }
+    //space between each character
+    // PORTB = 0;
+    // PORTD = 0 ;//apaga el PORTD
+    //PORTC = 0;
+
+    //aca apago todo los leds para dejar espacio lo mismo que PORTD = 0 (esta en HIGH por que es catodo comun)
+    for (int i = 0; i < 8; i++) {
+      digitalWrite(i, !estado);
+    }
+
+    /*
       digitalWrite(0, HIGH);
       digitalWrite(1, HIGH);
       digitalWrite(2, HIGH);
@@ -1164,23 +1209,8 @@ void loop() {
       digitalWrite(5, HIGH);
       digitalWrite(6, HIGH);
       digitalWrite(7, HIGH);
-      delay(refreshrate * 3); //off for 3 pixels
-    }
-    //space between each character
-    // PORTB = 0;
-    // PORTD = 0 ;//apaga el PORTD
-    //PORTC = 0;
+    */
 
-     //aca apago todo los leds para dejar espacio lo mismo que PORTD = 0 (esta en HIGH por que es catodo comun)
-    digitalWrite(0, HIGH);
-    digitalWrite(1, HIGH);
-    digitalWrite(2, HIGH);
-    digitalWrite(3, HIGH);
-    digitalWrite(4, HIGH);
-    digitalWrite(5, HIGH);
-    digitalWrite(6, HIGH);
-    digitalWrite(7, HIGH);
-    
     delay(refreshrate);
   }
 
@@ -1189,16 +1219,21 @@ void loop() {
   // PORTD = 0;//apaga PORTD
   // PORTC = 0;
 
-   //aca apago todo los leds para dejar espacio lo mismo que PORTD = 0 (esta en HIGH por que es catodo comun)
-  digitalWrite(0, HIGH);
-  digitalWrite(1, HIGH);
-  digitalWrite(2, HIGH);
-  digitalWrite(3, HIGH);
-  digitalWrite(4, HIGH);
-  digitalWrite(5, HIGH);
-  digitalWrite(6, HIGH);
-  digitalWrite(7, HIGH);
-  
+  //aca apago todo los leds para dejar espacio lo mismo que PORTD = 0 (esta en HIGH por que es catodo comun)
+  for (int i = 0; i < 8; i++) {
+    digitalWrite(i, !estado);
+  }
+  /* acá decía todo HIGH
+    digitalWrite(0, !estado);
+    digitalWrite(1, !estado);
+    digitalWrite(2, !estado);
+    digitalWrite(3, !estado);
+    digitalWrite(4, !estado);
+    digitalWrite(5, !estado);
+    digitalWrite(6, !estado);
+    digitalWrite(7, !estado);
+  */
+
   delay(refreshrate * 3);
 
 }
