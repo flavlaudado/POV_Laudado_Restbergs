@@ -1,0 +1,12 @@
+const boolean dibujo_0[] PROGMEM = {
+B, B, B, W, G, G, B,  
+G, B, G, W, B, B, B,  
+B, W, G, B, G, G, B,  
+B, W, G, W, G, B, C,  
+G, W, G, W, B, B, C,  
+G, B, G, W, B, B, C,  
+B, B, B, W, B, B, B,  
+B, B, B, B, B, B, B,  
+ 
+};
+ 
