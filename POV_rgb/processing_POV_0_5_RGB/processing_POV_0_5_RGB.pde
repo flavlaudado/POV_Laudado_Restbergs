@@ -111,7 +111,7 @@ void enviarTexto() {
 }
 
 void draw() {
-  guardado = true;
+  //guardado = true;
   if (guardado) {
     dibujar();
     cuadricula();
@@ -229,7 +229,7 @@ void keyPressed() {
   //println();
 
   //GUARDADO DEL ARCHIVO
-  if (key==ENTER) {
+  if (key == ENTER) {
     if ( guardado == false) {
       enviarTexto();
     } else {
@@ -238,20 +238,15 @@ void keyPressed() {
       int mitadAnchoPixel = anchoPixel/2;
       int mitadAltoPixel = altoPixel/2;
 
-      println("dibujoColor: " + dibujoColor );
       //chequeo si el dibujo está en color o blanco y negro
       for (int n = 0; n < columnas; n++) {
         acumuladorContadores += contadores[n];
-        println("acumuladorContadores: " + acumuladorContadores );
         if (acumuladorContadores == 0) {
           dibujoColor = false;
         } else {
           dibujoColor = true;
         }
       }
-      println("acumuladorContadores: " + acumuladorContadores );
-      println("dibujoColor: " + dibujoColor );
-
 
       println("Dibujo nro " + contador + ": ");
       output.println("const boolean dibujo_" + contador + "[] PROGMEM = {" );
@@ -266,8 +261,8 @@ void keyPressed() {
           char charColor = 'W';
           // colores: W RGB CMY B
           if (colR == 255 && colG == 255 && colB == 255) {
-            if(dibujoColor == true){
-            charColor = 'W';
+            if (dibujoColor == true) {
+              charColor = 'W';
             } else {
               charColor = '1';
             }
@@ -291,17 +286,17 @@ void keyPressed() {
             charColor = 'M';
           }
           if (colR == 0 && colG == 0 && colB == 0) {
-            if(dibujoColor == true){
-            charColor = 'B';
+            if (dibujoColor == true) {
+              charColor = 'B';
             } else {
               charColor = '0';
             }
           }
 
-          if (columnas != 0) {
-            columnas = 1;
-          }
-          int colInt = int(columnas);
+          //if (columnas != 0) {
+          //  columnas = 1;
+          //}
+          //int colInt = int(columnas);
 
           print(charColor + ", ");
 
@@ -327,5 +322,10 @@ void keyPressed() {
   if (key==' ') {
     fill(0);
     rect(0, 0, width, height);
+    for (int i = 0; i < columnas; i++) {
+      for (int j = 0; j < filas; j++) {
+        arrayImage[i][j] = 0;
+      }
+    }
   }
 }
