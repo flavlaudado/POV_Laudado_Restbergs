@@ -18,9 +18,13 @@
  text
  
  TAREA
- -diferenciar dibus B&W de color, 1-0, WRGBCMYB
- -después de apretar enter no deja seguir dibujando,
+ CHECK-diferenciar dibus B&W de color, 1-0, WRGBCMYB
+ CHECK-después de apretar enter no deja seguir dibujando,
  solo dibuja en la primer columna y no deja colorear
+ CHECK-cuando guarda en colores q mantenga los bits (0, 1)
+ pero que genere un String con las comlumnas de colores
+ 
+ error: colorea bits inactivos, aunque no se vea
  
  */
 
@@ -47,9 +51,9 @@ color colorRGB = color(255);
 boolean dibujoColor = false;
 PImage imgOut;
 int contadorColor = 0;
-int nColor = 1; //1-7
+int nColors = 8; //1-7
 color color1;
-int colorColumna[] = { 0, 0, 0, 0, 0, 0, 0};
+int colorColumna[] = { 3, 1, 1, 1, 1, 1, 1};
 int contadores[] = { 0, 0, 0, 0, 0, 0, 0};
 int acumuladorContadores = 0;
 
@@ -169,24 +173,27 @@ void colorear() {
 color chooseColor(int codColor) {
   color _color1 = color(255);
   if (codColor == 0) {
-    _color1 = color(255, 255, 255);
+    _color1 = color(0, 0, 0);
   } 
   if (codColor == 1) {
+    _color1 = color(255, 255, 255);
+  } 
+  if (codColor == 2) {
     _color1 = color(255, 0, 0);
   }
-  if (codColor == 2) {
+  if (codColor == 3) {
     _color1 = color(0, 255, 0);
   }
-  if (codColor == 3) {
+  if (codColor == 4) {
     _color1 = color(0, 0, 255);
   }
-  if (codColor == 4) {
+  if (codColor == 5) {
     _color1 = color(0, 255, 255);
   }
-  if (codColor == 5) {
+  if (codColor == 6) {
     _color1 = color(255, 0, 255);
   }
-  if (codColor == 6) {
+  if (codColor == 7) {
     _color1 = color(255, 255, 0);
   }
   return _color1;
@@ -194,8 +201,8 @@ color chooseColor(int codColor) {
 
 void actualizarContador(int tecla) {
   contadores[tecla]++;
-  if (contadores[tecla] >= columnas) {
-    contadores[tecla] = 0;
+  if (contadores[tecla] >= nColors) {
+    contadores[tecla] = 1;
   }
   colorColumna[tecla] = contadores[tecla];
   //print(", " + contadores[tecla]);
@@ -226,6 +233,15 @@ void keyPressed() {
   if (key=='7') {
     actualizarContador(6);
   }
+
+  if (key=='p') {
+    print("colors: ");
+    for (int n = 0; n < columnas; n++) {
+      print( colorColumna[n] + ", ");
+    }
+    println("");
+  }
+
   //println();
 
   //GUARDADO DEL ARCHIVO
@@ -258,49 +274,16 @@ void keyPressed() {
           float colG = green(c);
           float colB = blue(c);
 
-          char charColor = 'W';
-          // colores: W RGB CMY B
-          if (colR == 255 && colG == 255 && colB == 255) {
-            if (dibujoColor == true) {
-              charColor = 'W';
-            } else {
-              charColor = '1';
-            }
-          }
-          if (colR == 255 && colG == 0 && colB == 0) {
-            charColor = 'R';
-          }
-          if (colR == 0 && colG == 255 && colB == 0) {
-            charColor = 'G';
-          }
-          if (colR == 0 && colG == 0 && colB == 255) {
-            charColor = 'B';
-          }
-          if (colR == 255 && colG == 255 && colB == 0) {
-            charColor = 'Y';
-          }
-          if (colR == 0 && colG == 255 && colB == 255) {
-            charColor = 'C';
-          }
-          if (colR == 255 && colG == 0 && colB == 255) {
-            charColor = 'M';
-          }
+          char charBit = '0';
+
           if (colR == 0 && colG == 0 && colB == 0) {
-            if (dibujoColor == true) {
-              charColor = 'B';
-            } else {
-              charColor = '0';
-            }
+            charBit = '0';
+          } else {
+            charBit = '1';
           }
 
-          //if (columnas != 0) {
-          //  columnas = 1;
-          //}
-          //int colInt = int(columnas);
-
-          print(charColor + ", ");
-
-          output.print(charColor + ", ");
+          print(charBit+ ", ");
+          output.print(charBit+ ", ");
         }
         println(", ");
 
@@ -309,6 +292,46 @@ void keyPressed() {
 
       output.println(" ");
       output.println("};");
+      output.println(" ");
+      output.println(" ");
+
+      print("colors: ");
+      output.print("String povtext_color = " );
+      for (int n = 0; n < columnas; n++) {
+        char charColor = 'B';
+        if (colorColumna[n] == 0) {
+          charColor = 'B';
+        }
+        if (colorColumna[n] == 1) {
+          charColor = 'W';
+        }
+        if (colorColumna[n] == 2) {
+          charColor = 'R';
+        }
+        if (colorColumna[n] == 3) {
+          charColor = 'G';
+        }
+        if (colorColumna[n] == 4) {
+          charColor = 'B';
+        }
+        if (colorColumna[n] == 5) {
+          charColor = 'C';
+        }
+        if (colorColumna[n] == 6) {
+          charColor = 'M';
+        }
+        if (colorColumna[n] == 7) {
+          charColor = 'Y';
+        }
+        output.print(charColor);
+        print( charColor);
+
+        if (n != columnas - 1) {
+          output.print(", ");
+          print( ", ");
+        }
+      }
+      output.print("};");
       output.println(" ");
 
       output.flush(); 
@@ -323,6 +346,8 @@ void keyPressed() {
     fill(0);
     rect(0, 0, width, height);
     for (int i = 0; i < columnas; i++) {
+      colorColumna[i] = 0;
+      contadores[i] = 0;
       for (int j = 0; j < filas; j++) {
         arrayImage[i][j] = 0;
       }
