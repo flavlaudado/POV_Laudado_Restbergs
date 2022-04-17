@@ -17,6 +17,11 @@
  barra limpia la pantalla
  text
  
+ TAREA
+ -diferenciar dibus B&W de color, 1-0, WRGBCMYB
+ -después de apretar enter no deja seguir dibujando,
+ solo dibuja en la primer columna y no deja colorear
+ 
  */
 
 import controlP5.*;
@@ -38,13 +43,15 @@ int[][] arrayImage = new int[columnas][filas];
 //int arrayImage[columnas][filas];
 
 color colorRGB = color(255);
-color _colorRGB = color(0);
+//color _colorRGB = color(0);
+boolean dibujoColor = false;
 PImage imgOut;
 int contadorColor = 0;
 int nColor = 1; //1-7
 color color1;
 int colorColumna[] = { 0, 0, 0, 0, 0, 0, 0};
 int contadores[] = { 0, 0, 0, 0, 0, 0, 0};
+int acumuladorContadores = 0;
 
 PrintWriter output;
 int contador = 0;
@@ -104,7 +111,7 @@ void enviarTexto() {
 }
 
 void draw() {
-  //guardado = true;
+  guardado = true;
   if (guardado) {
     dibujar();
     cuadricula();
@@ -126,9 +133,10 @@ void cuadricula() {
 
 void dibujar() { //dibuja en cada cuadrante que se hace click
   if (mousePressed == true) {
-    nH = mouseX/anchoPixel;
-    nV = mouseY/altoPixel;
-    if (mouseButton == LEFT) {
+    nH = constrain(mouseX/anchoPixel, 0, columnas - 1);
+    nV = constrain(mouseY/altoPixel, 0, filas - 1);
+    if (mouseButton == LEFT) { 
+      //esta parte está funcionando ?!?
       //fill(1);
       fill(colorRGB);
       arrayImage[int(nH)][int(nV)] = 1;
@@ -143,34 +151,8 @@ void dibujar() { //dibuja en cada cuadrante que se hace click
   }
 }
 
-color chooseColor(int codColor) {
-  if (codColor == 0) {
-    _colorRGB = color(255, 255, 255);
-  } 
-  if (codColor == 1) {
-    _colorRGB = color(255, 0, 0);
-  }
-  if (codColor == 2) {
-    _colorRGB = color(0, 255, 0);
-  }
-  if (codColor == 3) {
-    _colorRGB = color(0, 0, 255);
-  }
-  if (codColor == 4) {
-    _colorRGB = color(255, 255, 0);
-  }
-  if (codColor == 5) {
-    _colorRGB = color(0, 255, 255);
-  }
-  if (codColor == 6) {
-    _colorRGB = color(255, 0, 255);
-  }
-  return _colorRGB;
-}
 void colorear() {
-  //si quiero colorear la columna 4 de rojo
-  //if (colorColumna[0] == 2) {
-
+  dibujoColor = true;
   for (int i = 0; i < columnas; i++) {//colorear columna
     color1 = chooseColor(colorColumna[i]);
     for (int j = 0; j < filas; j++) {//recorro todas las filas de esa columna
@@ -184,28 +166,44 @@ void colorear() {
   }
 }
 
-
-/*
-  for (int i = 0; i < columnas; i++) {
- for (int j = 0; j < filas; j++) {
- 
- arrayImage[i][j] = 0;
- }
- }  */
-
+color chooseColor(int codColor) {
+  color _color1 = color(255);
+  if (codColor == 0) {
+    _color1 = color(255, 255, 255);
+  } 
+  if (codColor == 1) {
+    _color1 = color(255, 0, 0);
+  }
+  if (codColor == 2) {
+    _color1 = color(0, 255, 0);
+  }
+  if (codColor == 3) {
+    _color1 = color(0, 0, 255);
+  }
+  if (codColor == 4) {
+    _color1 = color(0, 255, 255);
+  }
+  if (codColor == 5) {
+    _color1 = color(255, 0, 255);
+  }
+  if (codColor == 6) {
+    _color1 = color(255, 255, 0);
+  }
+  return _color1;
+}
 
 void actualizarContador(int tecla) {
   contadores[tecla]++;
-  if (contadores[tecla] > columnas) {
+  if (contadores[tecla] >= columnas) {
     contadores[tecla] = 0;
   }
   colorColumna[tecla] = contadores[tecla];
-  print(", " + contadores[tecla]);
+  //print(", " + contadores[tecla]);
   colorear();
 }
 
 void keyPressed() {
-
+  //Que todo esto funcione solo si ya guardé el nombre ...
   //ELEGIR EL COLOR
   if (key=='1') {//columna 1
     actualizarContador(0);
@@ -228,7 +226,7 @@ void keyPressed() {
   if (key=='7') {
     actualizarContador(6);
   }
-  println();
+  //println();
 
   //GUARDADO DEL ARCHIVO
   if (key==ENTER) {
@@ -240,6 +238,21 @@ void keyPressed() {
       int mitadAnchoPixel = anchoPixel/2;
       int mitadAltoPixel = altoPixel/2;
 
+      println("dibujoColor: " + dibujoColor );
+      //chequeo si el dibujo está en color o blanco y negro
+      for (int n = 0; n < columnas; n++) {
+        acumuladorContadores += contadores[n];
+        println("acumuladorContadores: " + acumuladorContadores );
+        if (acumuladorContadores == 0) {
+          dibujoColor = false;
+        } else {
+          dibujoColor = true;
+        }
+      }
+      println("acumuladorContadores: " + acumuladorContadores );
+      println("dibujoColor: " + dibujoColor );
+
+
       println("Dibujo nro " + contador + ": ");
       output.println("const boolean dibujo_" + contador + "[] PROGMEM = {" );
 
@@ -249,10 +262,15 @@ void keyPressed() {
           float colR = red(c);
           float colG = green(c);
           float colB = blue(c);
+
           char charColor = 'W';
-          // colores: W RGB YCM
+          // colores: W RGB CMY B
           if (colR == 255 && colG == 255 && colB == 255) {
+            if(dibujoColor == true){
             charColor = 'W';
+            } else {
+              charColor = '1';
+            }
           }
           if (colR == 255 && colG == 0 && colB == 0) {
             charColor = 'R';
@@ -273,7 +291,11 @@ void keyPressed() {
             charColor = 'M';
           }
           if (colR == 0 && colG == 0 && colB == 0) {
+            if(dibujoColor == true){
             charColor = 'B';
+            } else {
+              charColor = '0';
+            }
           }
 
           if (columnas != 0) {
