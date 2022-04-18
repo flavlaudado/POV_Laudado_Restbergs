@@ -43,8 +43,8 @@ int filas = 8;
 int anchoPixel, altoPixel;
 float nH, nV;
 color pixel;
-int[][] arrayImage = new int[columnas][filas];
-//int arrayImage[columnas][filas];
+int[][] arrayBits = new int[columnas][filas];
+//int arrayBits[columnas][filas];
 
 color colorRGB = color(255);
 //color _colorRGB = color(0);
@@ -53,16 +53,16 @@ PImage imgOut;
 int contadorColor = 0;
 int nColors = 8; //1-7
 color color1;
-int colorColumna[] = { 3, 1, 1, 1, 1, 1, 1};
-int contadores[] = { 0, 0, 0, 0, 0, 0, 0};
-int acumuladorContadores = 0;
+int colorColumna[] = { 1, 1, 1, 1, 1, 1, 1};
+int contadores[] = { 1, 1, 1, 1, 1, 1, 1};
+int acumuladorColorColumna = 0;
 
 PrintWriter output;
 int contador = 0;
 
 void setup() {
   //fullScreen();
-  size(601, 601);
+  size(700, 800);
   background(0);
 
   imgOut = createImage(width, height, ALPHA); 
@@ -115,7 +115,7 @@ void enviarTexto() {
 }
 
 void draw() {
-  //guardado = true;
+  guardado = true;
   if (guardado) {
     dibujar();
     cuadricula();
@@ -140,30 +140,24 @@ void dibujar() { //dibuja en cada cuadrante que se hace click
     nH = constrain(mouseX/anchoPixel, 0, columnas - 1);
     nV = constrain(mouseY/altoPixel, 0, filas - 1);
     if (mouseButton == LEFT) { 
-      //esta parte está funcionando ?!?
-      //fill(1);
-      fill(colorRGB);
-      arrayImage[int(nH)][int(nV)] = 1;
+      fill(1);
+      arrayBits[int(nH)][int(nV)] = 1;
     } else if (mouseButton == RIGHT) {
       fill(0);
-      arrayImage[int(nH)][int(nV)] = 0;
+      arrayBits[int(nH)][int(nV)] = 0;
       rect(nH * anchoPixel, nV * altoPixel, anchoPixel, altoPixel);
     }
     colorear();
-    //rect(nH * anchoPixel, nV * altoPixel, anchoPixel, altoPixel);
-    //println(arrayImage[0][0]);
   }
 }
 
 void colorear() {
   dibujoColor = true;
-  for (int i = 0; i < columnas; i++) {//colorear columna
-    color1 = chooseColor(colorColumna[i]);
+  for (int i = 0; i < columnas; i++) {
+    color1 = chooseColor(colorColumna[i]);//tomo el color de la columna
     for (int j = 0; j < filas; j++) {//recorro todas las filas de esa columna
-      if (arrayImage[i][j] != 0) {//si hay pixel activo
-        //pintar del color q indica el colorColumna
-        //color1 = color(255, 0, 0);
-        fill(color1);
+      if (arrayBits[i][j] != 0) {//si hay pixel activo
+        fill(color1);//pinto de ese color
         rect(i * anchoPixel, j * altoPixel, anchoPixel, altoPixel);
       }
     }
@@ -199,50 +193,58 @@ color chooseColor(int codColor) {
   return _color1;
 }
 
+void actualizarColorColumna(int tecla) {
+  colorColumna[tecla]++;
+  if (colorColumna[tecla] >= nColors) {
+    colorColumna[tecla] = 1;
+  }
+  //print(", " + colorColumna[tecla]);
+  colorear();
+}
+
+/*
 void actualizarContador(int tecla) {
   contadores[tecla]++;
   if (contadores[tecla] >= nColors) {
     contadores[tecla] = 1;
   }
-  colorColumna[tecla] = contadores[tecla];
+  colorColumna[tecla] = contadores[tecla]; //esto tiene un truquito
   //print(", " + contadores[tecla]);
   colorear();
-}
+} */
 
 void keyPressed() {
-  //Que todo esto funcione solo si ya guardé el nombre ...
   //ELEGIR EL COLOR
   if (key=='1') {//columna 1
-    actualizarContador(0);
+    actualizarColorColumna(0);
   }
   if (key=='2') {
-    actualizarContador(1);
+    actualizarColorColumna(1);
   }
   if (key=='3') {
-    actualizarContador(2);
+    actualizarColorColumna(2);
   }
   if (key=='4') {
-    actualizarContador(3);
+    actualizarColorColumna(3);
   }
   if (key=='5') {
-    actualizarContador(4);
+    actualizarColorColumna(4);
   }
   if (key=='6') {
-    actualizarContador(5);
+    actualizarColorColumna(5);
   }
   if (key=='7') {
-    actualizarContador(6);
+    actualizarColorColumna(6);
   }
 
-  if (key=='p') {
+  if (key=='p') { //PARA PRUEBAS
     print("colors: ");
     for (int n = 0; n < columnas; n++) {
-      print( colorColumna[n] + ", ");
+      print("color: " + colorColumna[n] + ", ");
+      println("contador: " + contadores[n] + ", ");
     }
     println("");
   }
-
-  //println();
 
   //GUARDADO DEL ARCHIVO
   if (key == ENTER) {
@@ -256,8 +258,8 @@ void keyPressed() {
 
       //chequeo si el dibujo está en color o blanco y negro
       for (int n = 0; n < columnas; n++) {
-        acumuladorContadores += contadores[n];
-        if (acumuladorContadores == 0) {
+        acumuladorColorColumna += colorColumna[n];
+        if (acumuladorColorColumna == 0) {
           dibujoColor = false;
         } else {
           dibujoColor = true;
@@ -298,9 +300,9 @@ void keyPressed() {
       print("colors: ");
       output.print("String povtext_color = " );
       for (int n = 0; n < columnas; n++) {
-        char charColor = 'B';
+        char charColor = ' ';
         if (colorColumna[n] == 0) {
-          charColor = 'B';
+          charColor = ' ';
         }
         if (colorColumna[n] == 1) {
           charColor = 'W';
@@ -346,10 +348,9 @@ void keyPressed() {
     fill(0);
     rect(0, 0, width, height);
     for (int i = 0; i < columnas; i++) {
-      colorColumna[i] = 0;
-      contadores[i] = 0;
+      colorColumna[i] = 1;
       for (int j = 0; j < filas; j++) {
-        arrayImage[i][j] = 0;
+        arrayBits[i][j] = 0;
       }
     }
   }
