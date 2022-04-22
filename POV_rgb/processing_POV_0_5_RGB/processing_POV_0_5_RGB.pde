@@ -14,7 +14,7 @@
  click der -> negro
  1-7 -> colorear columnas
  enter -> guardar img y array de datos
- barra limpia la pantalla
+ barra -> limpia la pantalla
  text
  
  TAREA
@@ -54,7 +54,6 @@ int contadorColor = 0;
 int nColors = 8; //1-7
 color color1;
 int colorColumna[] = { 1, 1, 1, 1, 1, 1, 1};
-int contadores[] = { 1, 1, 1, 1, 1, 1, 1};
 int acumuladorColorColumna = 0;
 
 PrintWriter output;
@@ -100,7 +99,7 @@ void setup() {
 public void controlEvent(ControlEvent theEvent) {
   if (theEvent.getController().getName().equals("Guardar")) {
     enviarTexto();
-  }
+  } 
 }
 
 void enviarTexto() {
@@ -115,7 +114,7 @@ void enviarTexto() {
 }
 
 void draw() {
-  guardado = true;
+  //guardado = true;
   if (guardado) {
     dibujar();
     cuadricula();
@@ -202,16 +201,6 @@ void actualizarColorColumna(int tecla) {
   colorear();
 }
 
-/*
-void actualizarContador(int tecla) {
-  contadores[tecla]++;
-  if (contadores[tecla] >= nColors) {
-    contadores[tecla] = 1;
-  }
-  colorColumna[tecla] = contadores[tecla]; //esto tiene un truquito
-  //print(", " + contadores[tecla]);
-  colorear();
-} */
 
 void keyPressed() {
   //ELEGIR EL COLOR
@@ -241,7 +230,6 @@ void keyPressed() {
     print("colors: ");
     for (int n = 0; n < columnas; n++) {
       print("color: " + colorColumna[n] + ", ");
-      println("contador: " + contadores[n] + ", ");
     }
     println("");
   }
@@ -266,8 +254,12 @@ void keyPressed() {
         }
       }
 
-      println("Dibujo nro " + contador + ": ");
-      output.println("const boolean dibujo_" + contador + "[] PROGMEM = {" );
+      //println("Dibujo nro " + contador + ": ");
+      //output.println("const boolean dibujo_" + contador + "[] PROGMEM = {" );
+      char charNombre = 0;
+      charNombre = char(contador + 97);
+      println("Dibujo nro " + charNombre + ": ");
+      output.println("const boolean dibujo_" + charNombre + "[] PROGMEM = {" );
 
       for (int j =mitadAltoPixel; j<imgOut.height; j += altoPixel) {
         for (int i = mitadAnchoPixel; i<imgOut.width; i += anchoPixel) {
@@ -292,13 +284,12 @@ void keyPressed() {
         output.println(" ");
       }
 
-      output.println(" ");
+      //output.println(" ");
       output.println("};");
       output.println(" ");
-      output.println(" ");
-
+      
       print("colors: ");
-      output.print("String povtext_color = " );
+      output.print("String povtext_color = { " );
       for (int n = 0; n < columnas; n++) {
         char charColor = ' ';
         if (colorColumna[n] == 0) {
