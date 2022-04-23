@@ -22,7 +22,16 @@
  CHECK-después de apretar enter no deja seguir dibujando,
  solo dibuja en la primer columna y no deja colorear
  CHECK-cuando guarda en colores q mantenga los bits (0, 1)
- pero que genere un String con las comlumnas de colores
+ -colores: String, no un array de char, ej: "MCRBGYW"
+ -que cuando inicia no te deje dibujar tan de toque
+ -que no te deje colorear la columna si no hay bit activo 
+ -al guardar la imagen que haga un flash
+ -cambiar el negro a "k"
+ -sacar la última coma del array de datos
+ CHECK-dibujar numeros 0-9
+ -si no hubo cambios  que no deje guardar
+ -a la intro agregar una musiquita y unos gifs
+ 
  
  error: colorea bits inactivos, aunque no se vea
  
