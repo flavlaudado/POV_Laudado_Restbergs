@@ -6,7 +6,7 @@
   CHECK borrar todo lo que no sirva:
         -port B y C -> data1 y data3
         -Boton q cambia color
-  -agregar numeros
+  CHECK-agregar numeros
   -que los dibujos se guarden en letras minusculas
   CHECK -agregar funcion para colorear por columna
   separar el programa de los datos en dos archivos
@@ -14,7 +14,7 @@
 
 #include <avr/pgmspace.h>//need to store letter arrays in flash memory- or else we run out of space, more info here: http://arduino.cc/en/Reference/PROGMEM
 
-String povtext = "0 0 ";//PUT YOUR MESSAGE HERE!!- must be in all caps, spaces are fine, no punctuation
+String povtext = "0 1 2 3 4 5 6 7 8 9";//PUT YOUR MESSAGE HERE!!- must be in all caps, spaces are fine, no punctuation
 byte refreshrate = 1;//delay time for pixels to refresh in milliseconds- experiment with different values
 
 //variable para setear los colores del texto
@@ -340,6 +340,116 @@ const boolean letterZ[] PROGMEM = {
   1, 1, 1, 1, 1, 1, 1
 };
 
+const boolean letter0[] PROGMEM = {
+1, 0, 0, 0, 0, 0, 1,  
+0, 0, 1, 1, 1, 0, 0,  
+0, 0, 1, 1, 1, 0, 0,  
+0, 0, 1, 1, 1, 0, 0,  
+0, 0, 1, 1, 1, 0, 0,  
+0, 0, 1, 1, 1, 0, 0,  
+1, 0, 0, 0, 0, 0, 1,  
+1, 1, 1, 1, 1, 1, 1  
+};
+  
+const boolean letter1[] PROGMEM = {
+1, 1, 0, 0, 0, 1, 1,  
+1, 0, 0, 0, 0, 1, 1,  
+1, 1, 0, 0, 0, 1, 1,  
+1, 1, 0, 0, 0, 1, 1,  
+1, 1, 0, 0, 0, 1, 1,  
+1, 1, 0, 0, 0, 1, 1,  
+0, 0, 0, 0, 0, 0, 0,  
+1, 1, 1, 1, 1, 1, 1  
+};
+  
+const boolean letter2[] PROGMEM = {
+1, 1, 0, 0, 0, 0, 1,  
+1, 0, 0, 1, 1, 0, 0,  
+1, 1, 1, 1, 1, 0, 0,  
+1, 1, 0, 0, 0, 0, 1,  
+1, 0, 0, 0, 1, 1, 1,  
+0, 0, 0, 1, 1, 1, 1,  
+0, 0, 0, 0, 0, 0, 0,  
+1, 1, 1, 1, 1, 1, 1  
+};
+  
+const boolean letter3[] PROGMEM = {
+1, 0, 0, 0, 0, 0, 1,  
+0, 0, 1, 1, 1, 0, 0,  
+1, 1, 1, 1, 1, 0, 0,  
+1, 1, 0, 0, 0, 0, 1,  
+1, 1, 1, 1, 1, 0, 0,  
+0, 0, 1, 1, 1, 0, 0,  
+1, 0, 0, 0, 0, 0, 1,  
+1, 1, 1, 1, 1, 1, 1  
+};
+  
+const boolean letter4[] PROGMEM = {
+0, 0, 1, 1, 1, 0, 0,  
+0, 0, 1, 1, 1, 0, 0,  
+0, 0, 1, 1, 1, 0, 0,  
+1, 0, 0, 0, 0, 0, 0,  
+1, 1, 1, 1, 0, 0, 0,  
+1, 1, 1, 1, 0, 0, 0,  
+1, 1, 1, 1, 0, 0, 0,  
+1, 1, 1, 1, 1, 1, 1  
+};
+  
+const boolean letter5[] PROGMEM = {
+0, 0, 0, 0, 0, 0, 0,  
+0, 0, 1, 1, 1, 1, 1,  
+0, 0, 1, 1, 1, 1, 1,  
+0, 0, 0, 0, 0, 0, 1,  
+1, 1, 1, 1, 1, 0, 0,  
+0, 0, 1, 1, 1, 0, 0,  
+1, 0, 0, 0, 0, 0, 1,  
+1, 1, 1, 1, 1, 1, 1  
+};
+  
+const boolean letter6[] PROGMEM = {
+1, 0, 0, 0, 0, 0, 1,  
+0, 0, 1, 1, 1, 0, 0,  
+0, 0, 1, 1, 1, 1, 1,  
+0, 0, 0, 0, 0, 0, 1,  
+0, 0, 1, 1, 1, 0, 0,  
+0, 0, 1, 1, 1, 0, 0,  
+1, 0, 0, 0, 0, 0, 1,  
+1, 1, 1, 1, 1, 1, 1  
+};
+  
+const boolean letter7[] PROGMEM = {
+0, 0, 0, 0, 0, 0, 0,  
+1, 1, 1, 1, 0, 0, 0,  
+1, 1, 1, 0, 0, 0, 1,  
+1, 1, 0, 0, 0, 1, 1,  
+1, 1, 0, 0, 1, 1, 1,  
+1, 1, 0, 0, 1, 1, 1,  
+1, 1, 0, 0, 1, 1, 1,  
+1, 1, 1, 1, 1, 1, 1  
+};
+ 
+const boolean letter8[] PROGMEM = {
+1, 0, 0, 0, 0, 0, 1,  
+0, 0, 1, 1, 1, 0, 0,  
+0, 0, 1, 1, 1, 0, 0,  
+1, 0, 0, 0, 0, 0, 1,  
+0, 0, 1, 1, 1, 0, 0,  
+0, 0, 1, 1, 1, 0, 0,  
+1, 0, 0, 0, 0, 0, 1,  
+1, 1, 1, 1, 1, 1, 1 
+};
+  
+const boolean letter9[] PROGMEM = {
+1, 0, 0, 0, 0, 0, 1,  
+0, 0, 1, 1, 1, 0, 0,  
+0, 0, 1, 1, 1, 0, 0,  
+1, 0, 0, 0, 0, 0, 0,  
+1, 1, 1, 1, 1, 0, 0,  
+0, 0, 1, 1, 1, 0, 0,  
+1, 0, 0, 0, 0, 0, 1,  
+1, 1, 1, 1, 1, 1, 1  
+};
+
 const boolean dibujo_0[] PROGMEM = {
   1, 0, 0, 0, 0, 0, 0,
   0, 1, 0, 0, 0, 0, 0,
@@ -616,6 +726,36 @@ void loop() {
       sendToWand(letterZ);
     }
     else if (povtext.charAt(n) == '0') {
+      sendToWand(letter0);
+    }
+    else if (povtext.charAt(n) == '1') {
+      sendToWand(letter1);
+    }
+    else if (povtext.charAt(n) == '2') {
+      sendToWand(letter2);
+    }
+    else if (povtext.charAt(n) == '3') {
+      sendToWand(letter3);
+    }
+    else if (povtext.charAt(n) == '4') {
+      sendToWand(letter4);
+    }
+    else if (povtext.charAt(n) == '5') {
+      sendToWand(letter5);
+    }
+    else if (povtext.charAt(n) == '6') {
+      sendToWand(letter6);
+    }
+    else if (povtext.charAt(n) == '7') {
+      sendToWand(letter7);
+    }
+    else if (povtext.charAt(n) == '8') {
+      sendToWand(letter8);
+    }
+    else if (povtext.charAt(n) == '9') {
+      sendToWand(letter9);
+    }
+    else if (povtext.charAt(n) == 'a') {
       sendDrawToWand(dibujo_0);
     }
     else if (povtext.charAt(n) == ' ') {
