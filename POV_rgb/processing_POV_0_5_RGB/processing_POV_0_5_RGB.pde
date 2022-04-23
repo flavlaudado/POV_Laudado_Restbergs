@@ -20,11 +20,11 @@
  TAREA
  CHECK-diferenciar dibus B&W de color, 1-0, WRGBCMYB
  CHECK-después de apretar enter no deja seguir dibujando,
- solo dibuja en la primer columna y no deja colorear
+ CHECK-solo dibuja en la primer columna y no deja colorear
  CHECK-cuando guarda en colores q mantenga los bits (0, 1)
- -colores: String, no un array de char, ej: "MCRBGYW"
- -que cuando inicia no te deje dibujar tan de toque
+ CHECK-colores: String, no un array de char, ej: "MCRBGYW"
  -que no te deje colorear la columna si no hay bit activo 
+ -que cuando inicia no te deje dibujar tan de toque
  -al guardar la imagen que haga un flash
  -cambiar el negro a "k"
  -sacar la última coma del array de datos
@@ -67,6 +67,7 @@ int acumuladorColorColumna = 0;
 
 PrintWriter output;
 int contador = 0;
+int framerate = 0;
 
 void setup() {
   //fullScreen();
@@ -123,6 +124,7 @@ void enviarTexto() {
 }
 
 void draw() {
+  framerate++;
   //guardado = true;
   if (guardado) {
     dibujar();
@@ -254,6 +256,7 @@ void keyPressed() {
       int mitadAltoPixel = altoPixel/2;
 
       //chequeo si el dibujo está en color o blanco y negro
+      //esto no funciona !!
       for (int n = 0; n < columnas; n++) {
         acumuladorColorColumna += colorColumna[n];
         if (acumuladorColorColumna == 0) {
@@ -261,6 +264,9 @@ void keyPressed() {
         } else {
           dibujoColor = true;
         }
+        fill(255);
+        rect(0,0,width, height);
+        colorear();
       }
 
       //println("Dibujo nro " + contador + ": ");
@@ -298,11 +304,11 @@ void keyPressed() {
       output.println(" ");
       
       print("colors: ");
-      output.print("String povtext_color = { " );
+      output.print("String povtext_color = { \"" ); //cambiar este nombre
       for (int n = 0; n < columnas; n++) {
         char charColor = ' ';
         if (colorColumna[n] == 0) {
-          charColor = ' ';
+          charColor = 'K';
         }
         if (colorColumna[n] == 1) {
           charColor = 'W';
@@ -327,15 +333,15 @@ void keyPressed() {
         }
         output.print(charColor);
         print( charColor);
-
+        /*
         if (n != columnas - 1) {
           output.print(", ");
           print( ", ");
-        }
+        } */
       }
-      output.print("};");
+      output.print("\" };");
       output.println(" ");
-
+ 
       output.flush(); 
       //output.close();
 
