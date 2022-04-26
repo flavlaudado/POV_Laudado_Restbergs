@@ -8,18 +8,20 @@
   CHECK-que los dibujos se guarden en letras minusculas
   CHECK -agregar funcion para colorear por columna
   separar el programa de los datos en dos archivos
-  agregar boolean para invertir - anda raro, probar fotos
+  CHECK-agregar boolean para invertir
+  CHECK-funcion para dibujar recibe el string
 */
 
 #include <avr/pgmspace.h>//need to store letter arrays in flash memory- or else we run out of space, more info here: http://arduino.cc/en/Reference/PROGMEM
 
-String povtext = " FOR THE FUN OF IT ";//PUT YOUR MESSAGE HERE!!- must be in all caps, spaces are fine, no punctuation
+String povtext = " a a a a a a a";
+//String povtext = " FOR THE FUN OF IT ";//PUT YOUR MESSAGE HERE!!- must be in all caps, spaces are fine, no punctuation
 byte refreshrate = 1;//delay time for pixels to refresh in milliseconds- experiment with different values
 
 //variable para setear los colores del texto
 String povtext_color = " WWW BBB MMM GG YY ";
 
-boolean invertir = true;
+boolean invertir = false;
 
 //get length of string povtext
 int dimtext = povtext.length();
@@ -451,19 +453,18 @@ const boolean letter9[] PROGMEM = {
   0, 0, 0, 0, 0, 0, 0
 };
 
-const boolean dibujo_0[] PROGMEM = {
-  0, 1, 1, 1, 1, 1, 1,
-  1, 0, 1, 1, 1, 1, 1,
-  1, 1, 0, 1, 1, 1, 1,
-  1, 1, 1, 0, 1, 1, 1,
-  1, 1, 1, 1, 0, 1, 1,
-  1, 1, 1, 1, 1, 0, 1,
-  1, 1, 1, 1, 1, 1, 0,
-  1, 1, 1, 1, 1, 1, 1
+const boolean dibujo_a[] PROGMEM = {
+0, 0, 0, 0, 0, 0, 0,  
+0, 1, 0, 0, 0, 1, 0,  
+1, 1, 1, 0, 1, 1, 1,  
+1, 1, 1, 1, 1, 1, 1,  
+1, 1, 1, 1, 1, 1, 1,  
+0, 1, 1, 1, 1, 1, 0,  
+0, 0, 1, 1, 1, 0, 0,  
+0, 0, 0, 1, 0, 0, 0,  
 };
-
-String dibujo_0_color = { "MCRBGYW"};
-//repensar si los colores los guardo en un String o en un array de char
+ 
+String dibujo_a_color = { "MMMMMMM" }; 
 
 //incoming data storage
 byte data2 = 0;//for portD
@@ -504,7 +505,7 @@ void sendToWand(const boolean letterArray[]) { //function to get array data
   }
 }
 
-void sendDrawToWand(const boolean letterArray[]) { //function to get array data
+void sendDrawToWand(const boolean letterArray[], String colorDibujo) { //function to get array data
 
   //una funcion para mandar los colores en String asociado
 
@@ -512,7 +513,7 @@ void sendDrawToWand(const boolean letterArray[]) { //function to get array data
     // l es la fila del array
 
     //coloreo segun su String asociado, falta recibir String
-    colorSetup(dibujo_0_color.charAt(t));
+    colorSetup(colorDibujo.charAt(t));
 
     //PINES 0-7 D
     for (l = 0; l < altoLetra; l++) { //for next eight rows of data
@@ -760,7 +761,7 @@ void loop() {
       sendToWand(letter9);
     }
     else if (povtext.charAt(n) == 'a') {
-      sendDrawToWand(dibujo_0);
+      sendDrawToWand(dibujo_a, dibujo_a_color);
     }
     else if (povtext.charAt(n) == ' ') {
       //PORTD = 0;
