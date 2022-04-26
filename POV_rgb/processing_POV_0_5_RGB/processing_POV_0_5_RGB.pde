@@ -30,9 +30,14 @@
  CHECK-dibujar numeros 0-9
  CHECK-si no hubo cambios  que no deje guardar
  -a la intro agregar una musiquita y unos gifs
+ -que muestre cuantos dibujos guardó
+ -poder hacer mas grande el lienzo
+ CHECK-corregir nombre del string de colores cuando guarda
+ 
+ futuro: poder cargar una imagen
  
  
- error: colorea bits inactivos, aunque no se vea
+ CHECK:error: colorea bits inactivos, aunque no se vea
  
  */
 
@@ -109,6 +114,7 @@ void setup() {
   fill(255);
   text("POV RGB para dibujar", xTexto - espaciado, yTexto - espaciado);
   text(consigna, xTexto, yTexto);
+
 }
 
 void inicializarArray() {
@@ -348,7 +354,8 @@ void keyPressed() {
         output.println(" ");
 
         print("colors: ");
-        output.print("String povtext_color = { \"" ); //cambiar este nombre
+        output.print("String dibujo_" + charNombre + "_color = { \"" );
+        
         for (int n = 0; n < columnas; n++) {
           char charColor = ' ';
           if (colorColumna[n] == 0) {
