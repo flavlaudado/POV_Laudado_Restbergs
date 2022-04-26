@@ -5,19 +5,21 @@
         -port B y C -> data1 y data3
         -Boton q cambia color
   CHECK-agregar numeros
-  -que los dibujos se guarden en letras minusculas
+  CHECK-que los dibujos se guarden en letras minusculas
   CHECK -agregar funcion para colorear por columna
   separar el programa de los datos en dos archivos
-  agregar boolean para invertir
+  agregar boolean para invertir - anda raro, probar fotos
 */
 
 #include <avr/pgmspace.h>//need to store letter arrays in flash memory- or else we run out of space, more info here: http://arduino.cc/en/Reference/PROGMEM
 
-String povtext = "0 1 2 3 4 5 6 7 8 9";//PUT YOUR MESSAGE HERE!!- must be in all caps, spaces are fine, no punctuation
+String povtext = " FOR THE FUN OF IT ";//PUT YOUR MESSAGE HERE!!- must be in all caps, spaces are fine, no punctuation
 byte refreshrate = 1;//delay time for pixels to refresh in milliseconds- experiment with different values
 
 //variable para setear los colores del texto
-String povtext_color = "CMY RGB";
+String povtext_color = " WWW BBB MMM GG YY ";
+
+boolean invertir = true;
 
 //get length of string povtext
 int dimtext = povtext.length();
@@ -340,113 +342,113 @@ const boolean letterZ[] PROGMEM = {
 };
 
 const boolean letter0[] PROGMEM = {
-0, 1, 1, 1, 1, 1, 0,  
-1, 1, 0, 0, 0, 1, 1,  
-1, 1, 0, 0, 0, 1, 1,  
-1, 1, 0, 0, 0, 1, 1,  
-1, 1, 0, 0, 0, 1, 1,  
-1, 1, 0, 0, 0, 1, 1,  
-0, 1, 1, 1, 1, 1, 0,  
-0, 0, 0, 0, 0, 0, 0  
+  0, 1, 1, 1, 1, 1, 0,
+  1, 1, 0, 0, 0, 1, 1,
+  1, 1, 0, 0, 0, 1, 1,
+  1, 1, 0, 0, 0, 1, 1,
+  1, 1, 0, 0, 0, 1, 1,
+  1, 1, 0, 0, 0, 1, 1,
+  0, 1, 1, 1, 1, 1, 0,
+  0, 0, 0, 0, 0, 0, 0
 };
-  
+
 const boolean letter1[] PROGMEM = {
-0, 0, 1, 1, 1, 0, 0,  
-0, 1, 1, 1, 1, 0, 0,  
-0, 0, 1, 1, 1, 0, 0,  
-0, 0, 1, 1, 1, 0, 0,  
-0, 0, 1, 1, 1, 0, 0,  
-0, 0, 1, 1, 1, 0, 0,  
-1, 1, 1, 1, 1, 1, 1,  
-0, 0, 0, 0, 0, 0, 0  
+  0, 0, 1, 1, 1, 0, 0,
+  0, 1, 1, 1, 1, 0, 0,
+  0, 0, 1, 1, 1, 0, 0,
+  0, 0, 1, 1, 1, 0, 0,
+  0, 0, 1, 1, 1, 0, 0,
+  0, 0, 1, 1, 1, 0, 0,
+  1, 1, 1, 1, 1, 1, 1,
+  0, 0, 0, 0, 0, 0, 0
 };
-  
+
 const boolean letter2[] PROGMEM = {
-0, 0, 1, 1, 1, 1, 0,  
-0, 1, 1, 0, 0, 1, 1,  
-0, 0, 0, 0, 0, 1, 1,  
-0, 0, 1, 1, 1, 1, 0,  
-0, 1, 1, 1, 0, 0, 0,  
-1, 1, 1, 0, 0, 0, 0,  
-1, 1, 1, 1, 1, 1, 1,  
-0, 0, 0, 0, 0, 0, 0  
+  0, 0, 1, 1, 1, 1, 0,
+  0, 1, 1, 0, 0, 1, 1,
+  0, 0, 0, 0, 0, 1, 1,
+  0, 0, 1, 1, 1, 1, 0,
+  0, 1, 1, 1, 0, 0, 0,
+  1, 1, 1, 0, 0, 0, 0,
+  1, 1, 1, 1, 1, 1, 1,
+  0, 0, 0, 0, 0, 0, 0
 };
-  
+
 const boolean letter3[] PROGMEM = {
-0, 1, 1, 1, 1, 1, 0,  
-1, 1, 0, 0, 0, 1, 1,  
-0, 0, 0, 0, 0, 1, 1,  
-0, 0, 1, 1, 1, 1, 0,  
-0, 0, 0, 0, 0, 1, 1,  
-1, 1, 0, 0, 0, 1, 1,  
-0, 1, 1, 1, 1, 1, 0,  
-0, 0, 0, 0, 0, 0, 0  
+  0, 1, 1, 1, 1, 1, 0,
+  1, 1, 0, 0, 0, 1, 1,
+  0, 0, 0, 0, 0, 1, 1,
+  0, 0, 1, 1, 1, 1, 0,
+  0, 0, 0, 0, 0, 1, 1,
+  1, 1, 0, 0, 0, 1, 1,
+  0, 1, 1, 1, 1, 1, 0,
+  0, 0, 0, 0, 0, 0, 0
 };
-  
+
 const boolean letter4[] PROGMEM = {
-1, 1, 0, 0, 0, 1, 1,  
-1, 1, 0, 0, 0, 1, 1,  
-1, 1, 0, 0, 0, 1, 1,  
-0, 1, 1, 1, 1, 1, 1,  
-0, 0, 0, 0, 1, 1, 1,  
-0, 0, 0, 0, 1, 1, 1,  
-0, 0, 0, 0, 1, 1, 1,  
-0, 0, 0, 0, 0, 0, 0  
+  1, 1, 0, 0, 0, 1, 1,
+  1, 1, 0, 0, 0, 1, 1,
+  1, 1, 0, 0, 0, 1, 1,
+  0, 1, 1, 1, 1, 1, 1,
+  0, 0, 0, 0, 1, 1, 1,
+  0, 0, 0, 0, 1, 1, 1,
+  0, 0, 0, 0, 1, 1, 1,
+  0, 0, 0, 0, 0, 0, 0
 };
-  
+
 const boolean letter5[] PROGMEM = {
-1, 1, 1, 1, 1, 1, 1,  
-1, 1, 0, 0, 0, 0, 0,  
-1, 1, 0, 0, 0, 0, 0,  
-1, 1, 1, 1, 1, 1, 0,  
-0, 0, 0, 0, 0, 1, 1,  
-1, 1, 0, 0, 0, 1, 1,  
-0, 1, 1, 1, 1, 1, 0,  
-0, 0, 0, 0, 0, 0, 0  
+  1, 1, 1, 1, 1, 1, 1,
+  1, 1, 0, 0, 0, 0, 0,
+  1, 1, 0, 0, 0, 0, 0,
+  1, 1, 1, 1, 1, 1, 0,
+  0, 0, 0, 0, 0, 1, 1,
+  1, 1, 0, 0, 0, 1, 1,
+  0, 1, 1, 1, 1, 1, 0,
+  0, 0, 0, 0, 0, 0, 0
 };
-  
+
 const boolean letter6[] PROGMEM = {
-0, 1, 1, 1, 1, 1, 0,  
-1, 1, 0, 0, 0, 1, 1,  
-1, 1, 0, 0, 0, 0, 0,  
-1, 1, 1, 1, 1, 1, 0,  
-1, 1, 0, 0, 0, 1, 1,  
-1, 1, 0, 0, 0, 1, 1,  
-0, 1, 1, 1, 1, 1, 0,  
-0, 0, 0, 0, 0, 0, 0  
+  0, 1, 1, 1, 1, 1, 0,
+  1, 1, 0, 0, 0, 1, 1,
+  1, 1, 0, 0, 0, 0, 0,
+  1, 1, 1, 1, 1, 1, 0,
+  1, 1, 0, 0, 0, 1, 1,
+  1, 1, 0, 0, 0, 1, 1,
+  0, 1, 1, 1, 1, 1, 0,
+  0, 0, 0, 0, 0, 0, 0
 };
-  
+
 const boolean letter7[] PROGMEM = {
-1, 1, 1, 1, 1, 1, 1,  
-0, 0, 0, 0, 1, 1, 1,  
-0, 0, 0, 1, 1, 1, 0,  
-0, 0, 1, 1, 1, 0, 0,  
-0, 0, 1, 1, 0, 0, 0,  
-0, 0, 1, 1, 0, 0, 0,  
-0, 0, 1, 1, 0, 0, 0,  
-0, 0, 0, 0, 0, 0, 0  
+  1, 1, 1, 1, 1, 1, 1,
+  0, 0, 0, 0, 1, 1, 1,
+  0, 0, 0, 1, 1, 1, 0,
+  0, 0, 1, 1, 1, 0, 0,
+  0, 0, 1, 1, 0, 0, 0,
+  0, 0, 1, 1, 0, 0, 0,
+  0, 0, 1, 1, 0, 0, 0,
+  0, 0, 0, 0, 0, 0, 0
 };
- 
+
 const boolean letter8[] PROGMEM = {
-0, 1, 1, 1, 1, 1, 0,  
-1, 1, 0, 0, 0, 1, 1,  
-1, 1, 0, 0, 0, 1, 1,  
-0, 1, 1, 1, 1, 1, 0,  
-1, 1, 0, 0, 0, 1, 1,  
-1, 1, 0, 0, 0, 1, 1,  
-0, 1, 1, 1, 1, 1, 0,  
-0, 0, 0, 0, 0, 0, 0 
+  0, 1, 1, 1, 1, 1, 0,
+  1, 1, 0, 0, 0, 1, 1,
+  1, 1, 0, 0, 0, 1, 1,
+  0, 1, 1, 1, 1, 1, 0,
+  1, 1, 0, 0, 0, 1, 1,
+  1, 1, 0, 0, 0, 1, 1,
+  0, 1, 1, 1, 1, 1, 0,
+  0, 0, 0, 0, 0, 0, 0
 };
-  
+
 const boolean letter9[] PROGMEM = {
-0, 1, 1, 1, 1, 1, 0,  
-1, 1, 0, 0, 0, 1, 1,  
-1, 1, 0, 0, 0, 1, 1,  
-0, 1, 1, 1, 1, 1, 1,  
-0, 0, 0, 0, 0, 1, 1,  
-1, 1, 0, 0, 0, 1, 1,  
-0, 1, 1, 1, 1, 1, 0,  
-0, 0, 0, 0, 0, 0, 0  
+  0, 1, 1, 1, 1, 1, 0,
+  1, 1, 0, 0, 0, 1, 1,
+  1, 1, 0, 0, 0, 1, 1,
+  0, 1, 1, 1, 1, 1, 1,
+  0, 0, 0, 0, 0, 1, 1,
+  1, 1, 0, 0, 0, 1, 1,
+  0, 1, 1, 1, 1, 1, 0,
+  0, 0, 0, 0, 0, 0, 0
 };
 
 const boolean dibujo_0[] PROGMEM = {
@@ -493,6 +495,9 @@ void sendToWand(const boolean letterArray[]) { //function to get array data
 
     //SET PINS:
     PORTD = data2; //0-7
+    if (invertir == true) {
+    PORTD = PORTD ^ B11111111;
+    }
     delay(refreshrate);
     //clear data storage
     data2 = 0;
@@ -506,7 +511,7 @@ void sendDrawToWand(const boolean letterArray[]) { //function to get array data
   for (t = 0; t < anchoLetra; t++) { //for each time step
     // l es la fila del array
 
-    //coloreo segun su String asociado
+    //coloreo segun su String asociado, falta recibir String
     colorSetup(dibujo_0_color.charAt(t));
 
     //PINES 0-7 D
@@ -776,16 +781,20 @@ void loop() {
 }
 
 void apagarLEDs(int tiempo) {
-  PORTD = 0; //probar medio raro
-  //PORTD = B11111111;
-//  digitalWrite(0, HIGH);
-//  digitalWrite(1, HIGH);
-//  digitalWrite(2, HIGH);
-//  digitalWrite(3, HIGH);
-//  digitalWrite(4, HIGH);
-//  digitalWrite(5, HIGH);
-//  digitalWrite(6, HIGH);
-//  digitalWrite(7, HIGH);
+  if (invertir == false) {
+    PORTD = 0; //probar medio raro
+  }
+  if (invertir == true) {
+    PORTD = B11111111;
+  }
+  //  digitalWrite(0, HIGH);
+  //  digitalWrite(1, HIGH);
+  //  digitalWrite(2, HIGH);
+  //  digitalWrite(3, HIGH);
+  //  digitalWrite(4, HIGH);
+  //  digitalWrite(5, HIGH);
+  //  digitalWrite(6, HIGH);
+  //  digitalWrite(7, HIGH);
 
   delay(refreshrate * tiempo);
 }
