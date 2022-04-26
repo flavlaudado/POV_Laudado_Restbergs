@@ -1,10 +1,9 @@
 /*
-
  POV - Flavia Laudado _ Mayo 2019
  
  Dibujar en una cuadrícula
- y exportar los datos en un array 
- También guarda cada dibujo
+ exportar los datos en un array 
+ y guardar cada dibujo
  
  Para desarrollar dibujos respresentados
  con una varita POV
@@ -23,13 +22,13 @@
  CHECK-solo dibuja en la primer columna y no deja colorear
  CHECK-cuando guarda en colores q mantenga los bits (0, 1)
  CHECK-colores: String, no un array de char, ej: "MCRBGYW"
- -que no te deje colorear la columna si no hay bit activo 
+ CHECK-que no te deje colorear la columna si no hay bit activo 
  -que cuando inicia no te deje dibujar tan de toque
- -al guardar la imagen que haga un flash
- -cambiar el negro a "k"
+ CHECK-al guardar la imagen que haga un flash
+ CHECK-cambiar el negro a "k"
  -sacar la última coma del array de datos
  CHECK-dibujar numeros 0-9
- -si no hubo cambios  que no deje guardar
+ CHECK-si no hubo cambios  que no deje guardar
  -a la intro agregar una musiquita y unos gifs
  
  
@@ -50,9 +49,11 @@ String nombre, nombreArchivo;
 int columnas = 7;//19;
 int filas = 8;
 int anchoPixel, altoPixel;
-float nH, nV;
+int nH, nV;
 color pixel;
 int[][] arrayBits = new int[columnas][filas];
+int[][] arrayBitsAnterior = new int[columnas][filas];
+boolean huboCambios;
 //int arrayBits[columnas][filas];
 
 color colorRGB = color(255);
@@ -62,12 +63,15 @@ PImage imgOut;
 int contadorColor = 0;
 int nColors = 8; //1-7
 color color1;
-int colorColumna[] = { 1, 1, 1, 1, 1, 1, 1};
+int colorColumna[] = { 0, 0, 0, 0, 0, 0, 0};
+//int colorColumna[] = { 1, 1, 1, 1, 1, 1, 1};
 int acumuladorColorColumna = 0;
 
 PrintWriter output;
 int contador = 0;
-int framerate = 0;
+int timeRef = 0;
+int intervalo = 7;
+boolean flash = false;
 
 void setup() {
   //fullScreen();
@@ -78,6 +82,7 @@ void setup() {
   //inicializacion cuadricula
   anchoPixel = width/columnas;
   altoPixel = height/filas;
+  inicializarArray();
 
   cp5 = new ControlP5(this);
 
@@ -106,10 +111,20 @@ void setup() {
   text(consigna, xTexto, yTexto);
 }
 
+void inicializarArray() {
+  for (int i = 0; i < columnas; i++) {
+    for (int j = 0; j < filas; j++) {
+      arrayBits[i][j] = 0;
+    }
+  }
+  arrayCopy(arrayBits, arrayBitsAnterior);
+  huboCambios = true;
+}
+
 public void controlEvent(ControlEvent theEvent) {
   if (theEvent.getController().getName().equals("Guardar")) {
     enviarTexto();
-  } 
+  }
 }
 
 void enviarTexto() {
@@ -124,11 +139,14 @@ void enviarTexto() {
 }
 
 void draw() {
-  framerate++;
   //guardado = true;
-  if (guardado) {
-    dibujar();
-    cuadricula();
+  if (flash == false) {
+    if (guardado) {
+      dibujar();
+      cuadricula();
+    }
+  } else {
+    flash(); //puedo usar guardado para lo del flash??
   }
 }
 
@@ -147,15 +165,25 @@ void cuadricula() {
 
 void dibujar() { //dibuja en cada cuadrante que se hace click
   if (mousePressed == true) {
-    nH = constrain(mouseX/anchoPixel, 0, columnas - 1);
-    nV = constrain(mouseY/altoPixel, 0, filas - 1);
+    huboCambios = true;
+    nH = int(constrain(mouseX/anchoPixel, 0, columnas - 1));
+    nV = int(constrain(mouseY/altoPixel, 0, filas - 1));
     if (mouseButton == LEFT) { 
       fill(1);
       arrayBits[int(nH)][int(nV)] = 1;
+      //si esa columna está en K q pase a W
+      if (colorColumna[nH] == 0) {
+        colorColumna[nH] = 1;
+      }
     } else if (mouseButton == RIGHT) {
       fill(0);
-      arrayBits[int(nH)][int(nV)] = 0;
+      arrayBits[nH][nV] = 0;
       rect(nH * anchoPixel, nV * altoPixel, anchoPixel, altoPixel);
+      //si despintó  toda la columna q la pase a K
+      if (columnaActiva(nH) == false) {
+        colorColumna[nH] = 0
+          ;
+      }
     }
     colorear();
   }
@@ -168,6 +196,9 @@ void colorear() {
     for (int j = 0; j < filas; j++) {//recorro todas las filas de esa columna
       if (arrayBits[i][j] != 0) {//si hay pixel activo
         fill(color1);//pinto de ese color
+        rect(i * anchoPixel, j * altoPixel, anchoPixel, altoPixel);
+      } else {
+        fill(0);//pinto los cuadrados no activos de negro
         rect(i * anchoPixel, j * altoPixel, anchoPixel, altoPixel);
       }
     }
@@ -212,28 +243,38 @@ void actualizarColorColumna(int tecla) {
   colorear();
 }
 
+boolean huboCambios() {
+  for (int i = 0; i < columnas; i++) {
+    for (int j = 0; j < filas; j++) {
+      if (arrayBits[i][j] != arrayBitsAnterior[i][j]) {
+        huboCambios = true;
+      }
+    }
+  }
+  return huboCambios;
+}
 
 void keyPressed() {
   //ELEGIR EL COLOR
-  if (key=='1') {//columna 1
+  if (key=='1' & columnaActiva(0)) {//columna 1
     actualizarColorColumna(0);
   }
-  if (key=='2') {
+  if (key=='2' & columnaActiva(1)) {
     actualizarColorColumna(1);
   }
-  if (key=='3') {
+  if (key=='3' & columnaActiva(2)) {
     actualizarColorColumna(2);
   }
-  if (key=='4') {
+  if (key=='4' & columnaActiva(3)) {
     actualizarColorColumna(3);
   }
-  if (key=='5') {
+  if (key=='5' & columnaActiva(4)) {
     actualizarColorColumna(4);
   }
-  if (key=='6') {
+  if (key=='6' & columnaActiva(5)) {
     actualizarColorColumna(5);
   }
-  if (key=='7') {
+  if (key=='7' & columnaActiva(6)) {
     actualizarColorColumna(6);
   }
 
@@ -247,117 +288,150 @@ void keyPressed() {
 
   //GUARDADO DEL ARCHIVO
   if (key == ENTER) {
+    timeRef = frameCount;
     if ( guardado == false) {
       enviarTexto();
     } else {
-      imgOut = get();
-      saveFrame(nombre + contador + ".jpg");
-      int mitadAnchoPixel = anchoPixel/2;
-      int mitadAltoPixel = altoPixel/2;
+      if (huboCambios()) {
+        timeRef = frameCount;
+        imgOut = get();
+        saveFrame(nombre + contador + ".jpg");//no deberia guardar nombre de char
+        int mitadAnchoPixel = anchoPixel/2;
+        int mitadAltoPixel = altoPixel/2;
 
-      //chequeo si el dibujo está en color o blanco y negro
-      //esto no funciona !!
-      for (int n = 0; n < columnas; n++) {
-        acumuladorColorColumna += colorColumna[n];
-        if (acumuladorColorColumna == 0) {
-          dibujoColor = false;
-        } else {
-          dibujoColor = true;
-        }
-        fill(255);
-        rect(0,0,width, height);
-        colorear();
-      }
-
-      //println("Dibujo nro " + contador + ": ");
-      //output.println("const boolean dibujo_" + contador + "[] PROGMEM = {" );
-      char charNombre = 0;
-      charNombre = char(contador + 97);
-      println("Dibujo nro " + charNombre + ": ");
-      output.println("const boolean dibujo_" + charNombre + "[] PROGMEM = {" );
-
-      for (int j =mitadAltoPixel; j<imgOut.height; j += altoPixel) {
-        for (int i = mitadAnchoPixel; i<imgOut.width; i += anchoPixel) {
-          color c = imgOut.get(i, j);
-          float colR = red(c);
-          float colG = green(c);
-          float colB = blue(c);
-
-          char charBit = '0';
-
-          if (colR == 0 && colG == 0 && colB == 0) {
-            charBit = '0';
+        //chequeo si el dibujo está en color o blanco y negro
+        //esto no funciona !!
+        for (int n = 0; n < columnas; n++) {
+          acumuladorColorColumna += colorColumna[n];
+          if (acumuladorColorColumna == 0) {
+            dibujoColor = false;
           } else {
-            charBit = '1';
+            dibujoColor = true;
           }
-
-          print(charBit+ ", ");
-          output.print(charBit+ ", ");
         }
-        println(", ");
 
+        //println("Dibujo nro " + contador + ": ");
+        //output.println("const boolean dibujo_" + contador + "[] PROGMEM = {" );
+        char charNombre = 0;
+        charNombre = char(contador + 97);
+        println("Dibujo nro " + charNombre + ": ");
+        output.println("const boolean dibujo_" + charNombre + "[] PROGMEM = {" );
+
+        //guardo analizando la imagen
+        //no debería simplemente guardar el arrayBits ??
+
+        for (int j =mitadAltoPixel; j<imgOut.height; j += altoPixel) {
+          for (int i = mitadAnchoPixel; i<imgOut.width; i += anchoPixel) {
+            color c = imgOut.get(i, j);
+            float colR = red(c);
+            float colG = green(c);
+            float colB = blue(c);
+
+            char charBit = '0';
+
+            if (colR == 0 && colG == 0 && colB == 0) {
+              charBit = '0';
+            } else {
+              charBit = '1';
+            }
+
+            print(charBit+ ", ");
+            output.print(charBit+ ", ");
+          }
+          println(", ");
+
+          output.println(" ");
+        }
+
+        //output.println(" ");
+        output.println("};");
         output.println(" ");
-      }
 
-      //output.println(" ");
-      output.println("};");
-      output.println(" ");
-      
-      print("colors: ");
-      output.print("String povtext_color = { \"" ); //cambiar este nombre
-      for (int n = 0; n < columnas; n++) {
-        char charColor = ' ';
-        if (colorColumna[n] == 0) {
-          charColor = 'K';
-        }
-        if (colorColumna[n] == 1) {
-          charColor = 'W';
-        }
-        if (colorColumna[n] == 2) {
-          charColor = 'R';
-        }
-        if (colorColumna[n] == 3) {
-          charColor = 'G';
-        }
-        if (colorColumna[n] == 4) {
-          charColor = 'B';
-        }
-        if (colorColumna[n] == 5) {
-          charColor = 'C';
-        }
-        if (colorColumna[n] == 6) {
-          charColor = 'M';
-        }
-        if (colorColumna[n] == 7) {
-          charColor = 'Y';
-        }
-        output.print(charColor);
-        print( charColor);
-        /*
+        print("colors: ");
+        output.print("String povtext_color = { \"" ); //cambiar este nombre
+        for (int n = 0; n < columnas; n++) {
+          char charColor = ' ';
+          if (colorColumna[n] == 0) {
+            charColor = 'K';
+          }
+          if (colorColumna[n] == 1) {
+            charColor = 'W';
+          }
+          if (colorColumna[n] == 2) {
+            charColor = 'R';
+          }
+          if (colorColumna[n] == 3) {
+            charColor = 'G';
+          }
+          if (colorColumna[n] == 4) {
+            charColor = 'B';
+          }
+          if (colorColumna[n] == 5) {
+            charColor = 'C';
+          }
+          if (colorColumna[n] == 6) {
+            charColor = 'M';
+          }
+          if (colorColumna[n] == 7) {
+            charColor = 'Y';
+          }
+          output.print(charColor);
+          print( charColor);
+          /*
         if (n != columnas - 1) {
-          output.print(", ");
-          print( ", ");
-        } */
-      }
-      output.print("\" };");
-      output.println(" ");
- 
-      output.flush(); 
-      //output.close();
+           output.print(", ");
+           print( ", ");
+           } */
+        }
+        output.print("\" };");
+        output.println(" ");
 
-      println(" ");
-      contador++;
+        output.flush(); 
+        //output.close();
+
+        println(" ");
+        huboCambios = false;
+        flash = true;
+        flash();
+
+        contador++;
+      }
+    }
+
+    if (key==' ') {
+      fill(0);
+      rect(0, 0, width, height);
+      for (int i = 0; i < columnas; i++) {
+        colorColumna[i] = 1;
+        for (int j = 0; j < filas; j++) {
+          arrayBits[i][j] = 0;
+        }
+      }
     }
   }
+}
 
-  if (key==' ') {
-    fill(0);
-    rect(0, 0, width, height);
-    for (int i = 0; i < columnas; i++) {
-      colorColumna[i] = 1;
-      for (int j = 0; j < filas; j++) {
-        arrayBits[i][j] = 0;
-      }
+boolean columnaActiva(int _i) {
+  boolean bitActivo = false; 
+  for (int j = 0; j < filas; j++) {//recorro todas las filas de esa columna
+    if (arrayBits[_i][j] != 0) {//si hay pixel activo
+      bitActivo = true;
     }
+  }
+  if (bitActivo) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+void flash() {
+  //fLASH blanco
+  fill(255);
+  rect(0, 0, width, height);
+  if (frameCount >= timeRef + intervalo) {
+    cuadricula();
+    colorear();
+    flash = false;
   }
 }
