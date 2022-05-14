@@ -26,11 +26,11 @@
  -que cuando inicia no te deje dibujar tan de toque
  CHECK-al guardar la imagen que haga un flash
  CHECK-cambiar el negro a "k"
- -sacar la última coma del array de datos
+ -sacar la última coma del array de datos (funciona igual...)
  CHECK-dibujar numeros 0-9
  CHECK-si no hubo cambios  que no deje guardar
  -a la intro agregar una musiquita y unos gifs
- -que muestre cuantos dibujos guardó
+ CHECK-que muestre cuantos dibujos guardó
  -poder hacer mas grande el lienzo
  CHECK-corregir nombre del string de colores cuando guarda
  
@@ -114,7 +114,6 @@ void setup() {
   fill(255);
   text("POV RGB para dibujar", xTexto - espaciado, yTexto - espaciado);
   text(consigna, xTexto, yTexto);
-
 }
 
 void inicializarArray() {
@@ -167,6 +166,7 @@ void cuadricula() {
     int yFilas = altoPixel * i;
     line(0, yFilas, width, yFilas);
   }
+  nDibujos();
 }
 
 void dibujar() { //dibuja en cada cuadrante que se hace click
@@ -355,7 +355,7 @@ void keyPressed() {
 
         print("colors: ");
         output.print("String dibujo_" + charNombre + "_color = { \"" );
-        
+
         for (int n = 0; n < columnas; n++) {
           char charColor = ' ';
           if (colorColumna[n] == 0) {
@@ -441,4 +441,12 @@ void flash() {
     colorear();
     flash = false;
   }
+}
+
+void nDibujos() {
+  textSize(12);
+  fill(127);
+  rect(0, 0, 100, 20);
+  fill(255);
+  text("Dibujo Nro: " + contador, 5, 12);
 }
